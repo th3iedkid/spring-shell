@@ -15,8 +15,7 @@
  */
 package org.springframework.shell.core;
 
-import java.util.logging.Logger;
-
+import org.apache.commons.logging.Log;
 import org.springframework.shell.event.ParseResult;
 import org.springframework.shell.support.logging.HandlerUtils;
 import org.springframework.shell.support.util.Assert;
@@ -32,7 +31,7 @@ import org.springframework.shell.support.util.ReflectionUtils;
  */
 public class SimpleExecutionStrategy implements ExecutionStrategy {
 
-	private static final Logger logger = HandlerUtils.getLogger(SimpleExecutionStrategy.class);
+	private static final Log logger = HandlerUtils.getLogger(SimpleExecutionStrategy.class);
 
 	private final Class<?> mutex = SimpleExecutionStrategy.class;
 
@@ -63,7 +62,7 @@ public class SimpleExecutionStrategy implements ExecutionStrategy {
 		try {
 			return ReflectionUtils.invokeMethod(parseResult.getMethod(), parseResult.getInstance(), parseResult.getArguments());
 		} catch (Throwable th) {
-			logger.severe("Command failed " + th);
+			logger.error("Command failed " + th);
 			return handleThrowable(th);
 		}
 	}

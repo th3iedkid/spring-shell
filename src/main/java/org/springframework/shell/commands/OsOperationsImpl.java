@@ -19,9 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
 import org.springframework.shell.support.logging.HandlerUtils;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class OsOperationsImpl implements OsOperations {
-	private static final Logger LOGGER = HandlerUtils.getLogger(OsOperationsImpl.class);
+	private static final Log LOGGER = HandlerUtils.getLogger(OsOperationsImpl.class);
 
 	public void executeCommand(final String command) throws IOException {
 		final File root = new File(".");
@@ -43,10 +43,10 @@ public class OsOperationsImpl implements OsOperations {
 
 		for (String line : IOUtils.readLines(input)) {
 			if (line.startsWith("[ERROR]")) {
-				LOGGER.severe(line);
+				LOGGER.error(line);
 			}
 			else if (line.startsWith("[WARNING]")) {
-				LOGGER.warning(line);
+				LOGGER.warn(line);
 			}
 			else {
 				LOGGER.info(line);
@@ -56,10 +56,10 @@ public class OsOperationsImpl implements OsOperations {
 		
 		for (String line : IOUtils.readLines(errors)) {
 			if (line.startsWith("[ERROR]")) {
-				LOGGER.severe(line);
+				LOGGER.error(line);
 			}
 			else if (line.startsWith("[WARNING]")) {
-				LOGGER.warning(line);
+				LOGGER.warn(line);
 			}
 			else {
 				LOGGER.info(line);
@@ -72,7 +72,7 @@ public class OsOperationsImpl implements OsOperations {
 
 		try {
 			if (p.waitFor() != 0) {
-				LOGGER.warning("The command '" + command + "' did not complete successfully");
+				LOGGER.warn("The command '" + command + "' did not complete successfully");
 			}
 		} catch (final InterruptedException e) {
 			throw new IllegalStateException(e);

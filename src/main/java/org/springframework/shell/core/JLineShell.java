@@ -44,8 +44,8 @@ import jline.WindowsTerminal;
 
 import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.springframework.shell.event.ShellStatus;
-import org.springframework.shell.event.ShellStatusListener;
 import org.springframework.shell.event.ShellStatus.Status;
+import org.springframework.shell.event.ShellStatusListener;
 import org.springframework.shell.support.util.Assert;
 import org.springframework.shell.support.util.ClassUtils;
 import org.springframework.shell.support.util.IOUtils;
@@ -181,7 +181,7 @@ public abstract class JLineShell extends AbstractShell implements CommandMarker,
 				}
 			}
 		} catch (IOException e) {
-			logger.warning("read history file failed. Reason:"+ e.getMessage());
+			logger.warn("read history file failed. Reason:" + e.getMessage());
 		}
 		Collections.reverse(entries);
 		return entries.toArray(new String[0]);
@@ -203,7 +203,7 @@ public abstract class JLineShell extends AbstractShell implements CommandMarker,
 				    consoleReader = createAnsiWindowsReader();
 				} catch (Exception e) {
 					// Try again using default ConsoleReader constructor
-					logger.warning("Can't initialize jansi AnsiConsole, falling back to default: " + e);
+					logger.warn("Can't initialize jansi AnsiConsole, falling back to default: " + e);
 				}
 			}
 			if (consoleReader == null) {

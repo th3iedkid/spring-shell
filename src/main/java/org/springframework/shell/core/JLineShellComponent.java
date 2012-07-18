@@ -108,7 +108,7 @@ public class JLineShellComponent extends JLineShell implements Lifecycle {
 			}
 			return list;
 		} catch (IOException ex) {
-			logger.fine("Cannot find path " + path);
+			logger.debug("Cannot find path " + path);
 			// return Collections.emptyList();
 			throw new RuntimeException(ex);
 		}

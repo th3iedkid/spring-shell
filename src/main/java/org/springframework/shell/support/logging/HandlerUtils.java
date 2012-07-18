@@ -24,6 +24,8 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.shell.support.util.Assert;
 import org.springframework.shell.support.util.StringUtils;
 
@@ -36,22 +38,8 @@ import org.springframework.shell.support.util.StringUtils;
  */
 public abstract class HandlerUtils {
 
-	/**
-	 * Obtains a {@link Logger} that guarantees to set the {@link Level}
-	 * to {@link Level#FINE} if it is part of org.springframework.roo.
-	 * Unfortunately this is needed due to a regression in JDK 1.6.0_18
-	 * as per issue ROO-539.
-	 *
-	 * @param clazz to retrieve the logger for (required)
-	 * @return the logger, which will at least of {@link Level#FINE} if no level was specified
-	 */
-	public static Logger getLogger(final Class<?> clazz) {
-		Assert.notNull(clazz, "Class required");
-		Logger logger = Logger.getLogger(clazz.getName());
-		if (logger.getLevel() == null && clazz.getName().startsWith("org.springframework.shell")) {
-			logger.setLevel(Level.FINE);
-		}
-		return logger;
+	public static Log getLogger(final Class<?> clazz) {
+		return LogFactory.getLog(clazz);
 	}
 
 	/**

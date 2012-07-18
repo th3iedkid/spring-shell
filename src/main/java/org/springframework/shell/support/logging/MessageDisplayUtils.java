@@ -18,9 +18,8 @@ package org.springframework.shell.support.logging;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.commons.logging.Log;
 import org.springframework.shell.support.util.FileCopyUtils;
 import org.springframework.shell.support.util.IOUtils;
 
@@ -37,7 +36,7 @@ import org.springframework.shell.support.util.IOUtils;
 public abstract class MessageDisplayUtils {
 
 	// Constants
-	private static Logger LOGGER = HandlerUtils.getLogger(MessageDisplayUtils.class);
+	private static Log LOGGER = HandlerUtils.getLogger(MessageDisplayUtils.class);
 
 	/**
 	 * Displays the requested file via the LOGGER API.
@@ -53,7 +52,6 @@ public abstract class MessageDisplayUtils {
 	 * @param important if true, it will display with a higher importance color where possible
 	 */
 	public static void displayFile(final String fileName, final Class<?> owner, final boolean important) {
-		Level level = important ? Level.SEVERE : Level.FINE;
 		String owningPackage = owner.getPackage().getName().replace('.', '/');
 		String fullResourceName = "/" + owningPackage + "/" + fileName;
 		InputStream inputStream = owner.getClassLoader().getResourceAsStream(fullResourceName);
@@ -62,7 +60,12 @@ public abstract class MessageDisplayUtils {
 		}
 		try {
 			String message = FileCopyUtils.copyToString(new InputStreamReader(new BufferedInputStream(inputStream)));
-			LOGGER.log(level, message);
+			if (important) {
+				LOGGER.error(message);
+			}
+			else {
+				LOGGER.debug(message);
+			}
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		} finally {

@@ -16,8 +16,8 @@
 package org.springframework.shell.commands;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
+import org.apache.commons.logging.Log;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
@@ -34,8 +34,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OsCommands implements CommandMarker {
 
-    private static final Logger LOGGER = HandlerUtils
-            .getLogger(OsCommands.class);
+	private static final Log LOGGER = HandlerUtils.getLogger(OsCommands.class);
 
     private OsOperations osOperations = new OsOperationsImpl();
 
@@ -49,7 +48,7 @@ public class OsCommands implements CommandMarker {
                 osOperations.executeCommand(command);
             }
             catch (final IOException e) {
-                LOGGER.severe("Unable to execute command " + command + " ["
+				LOGGER.error("Unable to execute command " + command + " ["
                         + e.getMessage() + "]");
             }
         }

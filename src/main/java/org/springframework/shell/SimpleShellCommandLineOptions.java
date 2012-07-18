@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
 import org.springframework.shell.support.logging.HandlerUtils;
 
 /**
@@ -33,8 +33,9 @@ import org.springframework.shell.support.logging.HandlerUtils;
  */
 public class SimpleShellCommandLineOptions {
 	
-  private static final Logger LOGGER = HandlerUtils.getLogger(SimpleShellCommandLineOptions.class);
-  private static final int DEFAULT_HISTORY_SIZE = 3000;
+	private static final Log LOGGER = HandlerUtils.getLogger(SimpleShellCommandLineOptions.class);
+	private static final int DEFAULT_HISTORY_SIZE = 3000;
+
 	String[] executeThenQuit = null;
 	Map<String, String> extraSystemProperties = new HashMap<String, String>();
 	int historySize = DEFAULT_HISTORY_SIZE;
@@ -50,7 +51,7 @@ public class SimpleShellCommandLineOptions {
 					String profiles = args[i++];
 					options.extraSystemProperties.put("spring.profiles.active", profiles);
 				} catch (ArrayIndexOutOfBoundsException e) {
-					LOGGER.warning("No value specified for --profiles option");
+					LOGGER.warn("No value specified for --profiles option");
 				}
 			}
 			else if (arg.equals("--cmdfile")) {
@@ -58,9 +59,9 @@ public class SimpleShellCommandLineOptions {
 					File f = new File(args[i++]);
 				  commands.addAll(FileUtils.readLines(f));
 				} catch (IOException e) {
-					LOGGER.warning("Could not read lines from command file: " +  e.getMessage());
+					LOGGER.warn("Could not read lines from command file: " + e.getMessage());
 				} catch (ArrayIndexOutOfBoundsException e) {
-					LOGGER.warning("No value specified for --cmdfile option");
+					LOGGER.warn("No value specified for --cmdfile option");
 				}
 			}
 			else if (arg.equals("--histsize")) {		
@@ -68,14 +69,14 @@ public class SimpleShellCommandLineOptions {
 					String histSizeArg = args[i++];		
 					int histSize = Integer.parseInt(histSizeArg);
 					if (histSize <= 0) {
-						LOGGER.warning("histsize option must be > 0, using default value of " + DEFAULT_HISTORY_SIZE);
+						LOGGER.warn("histsize option must be > 0, using default value of " + DEFAULT_HISTORY_SIZE);
 					} else {
 					  options.historySize = histSize;
 					}
 				} catch (NumberFormatException e) {
-          LOGGER.warning("Unable to parse histsize value to an integer ");
+					LOGGER.warn("Unable to parse histsize value to an integer ");
 				} catch (ArrayIndexOutOfBoundsException ae) {
-					LOGGER.warning("No value specified for --histsize option");
+					LOGGER.warn("No value specified for --histsize option");
 				}
 			}
 			else if (arg.equals("--help")) {

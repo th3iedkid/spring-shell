@@ -17,8 +17,6 @@ package org.springframework.shell;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -30,7 +28,6 @@ import org.springframework.shell.core.Converter;
 import org.springframework.shell.core.ExitShellRequest;
 import org.springframework.shell.core.JLineShellComponent;
 import org.springframework.shell.core.Shell;
-import org.springframework.shell.support.logging.HandlerUtils;
 import org.springframework.util.StopWatch;
 
 /**
@@ -62,7 +59,7 @@ public class Bootstrap {
 		} catch (RuntimeException t) {
 			throw t;
 		} finally {
-			HandlerUtils.flushAllHandlers(Logger.getLogger(""));
+			//HandlerUtils.flushAllHandlers(Logger.getLogger(""));
 		}
 
 		System.exit(exitShellRequest.getExitCode());
@@ -148,23 +145,6 @@ public class Bootstrap {
 			annctx.registerBeanDefinition(clazz.getSimpleName(), rbd);
 		}
 	}
-
-	// seems on JDK 1.6.0_18 or higher causes the output to disappear
-	private void setupLogging() {
-		// Ensure all JDK log messages are deferred until a target is registered
-		Logger rootLogger = Logger.getLogger("");
-		HandlerUtils.wrapWithDeferredLogHandler(rootLogger, Level.SEVERE);
-
-		// Set a suitable priority level on Spring Framework log messages
-		Logger sfwLogger = Logger.getLogger("org.springframework");
-		sfwLogger.setLevel(Level.WARNING);
-
-		// Set a suitable priority level on Roo log messages
-		// (see ROO-539 and HandlerUtils.getLogger(Class))
-		Logger rooLogger = Logger.getLogger("org.springframework.shell");
-		rooLogger.setLevel(Level.FINE);
-	}
-
 
 	protected ExitShellRequest run(String[] executeThenQuit) {
 

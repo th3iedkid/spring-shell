@@ -15,8 +15,6 @@
  */
 package org.springframework.shell.core;
 
-import static org.springframework.shell.support.util.StringUtils.LINE_SEPARATOR;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,8 +32,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.commons.logging.Log;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.shell.event.AbstractShellStatusPublisher;
@@ -49,6 +47,8 @@ import org.springframework.shell.support.util.MathUtils;
 import org.springframework.shell.support.util.StringUtils;
 import org.springframework.shell.support.util.VersionUtils;
 
+import static org.springframework.shell.support.util.StringUtils.*;
+
 /**
  * Provides a base {@link Shell} implementation.
  *
@@ -58,6 +58,11 @@ public abstract class AbstractShell extends AbstractShellStatusPublisher impleme
 
 	// Constants
 	private static final String MY_SLOT = AbstractShell.class.getName();
+	private static final int TRACE_LEVEL_THRESHOLD = Level.FINEST.intValue();
+	private static final int DEBUG_LEVEL_THRESHOLD = Level.FINE.intValue();
+	private static final int INFO_LEVEL_THRESHOLD = Level.INFO.intValue();
+	private static final int WARN_LEVEL_THRESHOLD = Level.WARNING.intValue();
+
 	
 	//TODO Abstract out to make configurable.
 	protected static final String ROO_PROMPT = "spring> ";
@@ -68,7 +73,7 @@ public abstract class AbstractShell extends AbstractShellStatusPublisher impleme
 	public static String shellPrompt = ROO_PROMPT;
 
 	// Instance fields
-	protected final Logger logger = HandlerUtils.getLogger(getClass());
+	protected final Log logger = HandlerUtils.getLogger(getClass());
 	protected boolean inBlockComment;
 	protected ExitShellRequest exitShellRequest;
 
@@ -104,9 +109,9 @@ public abstract class AbstractShell extends AbstractShellStatusPublisher impleme
 			while ((line = in.readLine()) != null) {
 				i++;
 				if (lineNumbers) {
-					logger.fine("Line " + i + ": " + line);
+					logger.debug("Line " + i + ": " + line);
 				} else {
-					logger.fine(line);
+					logger.debug(line);
 				}
 				if (!"".equals(line.trim())) {
 					boolean success = executeScriptLine(line);
@@ -123,7 +128,7 @@ public abstract class AbstractShell extends AbstractShellStatusPublisher impleme
 		} finally {
 			IOUtils.closeQuietly(inputStream, in);
 			double executionDurationInSeconds = (System.nanoTime() - startedNanoseconds) / 1000000000D;
-			logger.fine("Script required " + MathUtils.round(executionDurationInSeconds, 3) + " seconds to execute");
+			logger.debug("Script required " + MathUtils.round(executionDurationInSeconds, 3) + " seconds to execute");
 		}
 	}
 
@@ -457,7 +462,23 @@ public abstract class AbstractShell extends AbstractShellStatusPublisher impleme
 		Assert.notNull(message, "Message is required for a flash message");
 		Assert.hasText(slot, "Slot name must be specified for a flash message");
 		if (!("".equals(message))) {
-			logger.log(level, message);
+			int lvl = level.intValue();
+
+			if (lvl <= TRACE_LEVEL_THRESHOLD) {
+				logger.trace(message);
+			}
+			else if (lvl <= DEBUG_LEVEL_THRESHOLD) {
+				logger.debug(message);
+			}
+			else if (lvl <= INFO_LEVEL_THRESHOLD) {
+				logger.info(message);
+			}
+			else if (lvl <= WARN_LEVEL_THRESHOLD) {
+				logger.warn(message);
+			}
+			else {
+				logger.error(message);
+			}
 		}
 	}
 	

@@ -36,13 +36,13 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
 
+import org.apache.commons.logging.Log;
 import org.springframework.shell.core.annotation.CliAvailabilityIndicator;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
@@ -70,7 +70,7 @@ import org.w3c.dom.Element;
 public class SimpleParser implements Parser {
 
 	// Constants
-	private static final Logger LOGGER = HandlerUtils.getLogger(SimpleParser.class);
+	private static final Log LOGGER = HandlerUtils.getLogger(SimpleParser.class);
 	private static final Comparator<Object> COMPARATOR = new NaturalOrderComparator<Object>();
 
 	// Fields
@@ -134,14 +134,14 @@ public class SimpleParser implements Parser {
 					commandNotFound(LOGGER, input);
 				}
 				else {
-					LOGGER.warning("Command '"
+					LOGGER.warn("Command '"
 							+ input
 							+ "' was found but is not currently available (type 'help' then ENTER to learn about this command)");
 				}
 				return null;
 			}
 			if (matchingTargets.size() > 1) {
-				LOGGER.warning("Ambigious command '" + input + "' (for assistance press "
+				LOGGER.warn("Ambigious command '" + input + "' (for assistance press "
 						+ AbstractShell.completionKeys + " or type \"hint\" then hit ENTER)");
 				return null;
 			}
@@ -162,7 +162,7 @@ public class SimpleParser implements Parser {
 			try {
 				options = ParserUtils.tokenize(methodTarget.getRemainingBuffer());
 			} catch (IllegalArgumentException e) {
-				LOGGER.warning(ExceptionUtils.extractRootCause(e).getMessage());
+				LOGGER.warn(ExceptionUtils.extractRootCause(e).getMessage());
 				return null;
 			}
 
@@ -176,7 +176,7 @@ public class SimpleParser implements Parser {
 						result = this;
 					}
 					else {
-						LOGGER.warning("Parameter type '" + requiredType + "' is not system provided");
+						LOGGER.warn("Parameter type '" + requiredType + "' is not system provided");
 						return null;
 					}
 					arguments.add(result);
@@ -189,7 +189,7 @@ public class SimpleParser implements Parser {
 				for (String possibleKey : cliOption.key()) {
 					if (options.containsKey(possibleKey)) {
 						if (sourcedFrom != null) {
-							LOGGER.warning("You cannot specify option '" + possibleKey
+							LOGGER.warn("You cannot specify option '" + possibleKey
 									+ "' when you have also specified '" + sourcedFrom + "' in the same command");
 							return null;
 						}
@@ -216,7 +216,7 @@ public class SimpleParser implements Parser {
 							message.append("(otherwise known as option '").append(cliOption.key()[1]).append("') ");
 						}
 						message.append("for this command");
-						LOGGER.warning(message.toString());
+						LOGGER.warn(message.toString());
 					}
 					else {
 						printHintMessage(cliOptions, options);
@@ -237,7 +237,7 @@ public class SimpleParser implements Parser {
 				// Special token that denotes a null value is sought (useful for default values)
 				if ("__NULL__".equals(value)) {
 					if (requiredType.isPrimitive()) {
-						LOGGER.warning("Nulls cannot be presented to primitive type " + requiredType.getSimpleName()
+						LOGGER.warn("Nulls cannot be presented to primitive type " + requiredType.getSimpleName()
 								+ " for option '" + StringUtils.arrayToCommaDelimitedString(cliOption.key()) + "'");
 						return null;
 					}
@@ -274,11 +274,11 @@ public class SimpleParser implements Parser {
 					}
 					arguments.add(result);
 				} catch (RuntimeException e) {
-					LOGGER.warning(e.getClass().getName() + ": Failed to convert '" + value + "' to type "
+					LOGGER.warn(e.getClass().getName() + ": Failed to convert '" + value + "' to type "
 							+ requiredType.getSimpleName() + " for option '"
 							+ StringUtils.arrayToCommaDelimitedString(cliOption.key()) + "'");
 					if (StringUtils.hasText(e.getMessage())) {
-						LOGGER.warning(e.getMessage());
+						LOGGER.warn(e.getMessage());
 					}
 					return null;
 				} finally {
@@ -301,7 +301,7 @@ public class SimpleParser implements Parser {
 							" are not available for this command. ");
 				}
 				message.append("Use tab assist or the \"help\" command to see the legal options");
-				LOGGER.warning(message.toString());
+				LOGGER.warn(message.toString());
 				return null;
 			}
 
@@ -346,10 +346,10 @@ public class SimpleParser implements Parser {
 		String hintForOption = optionBuilder.toString();
 		hintForOption = hintForOption.substring(0, hintForOption.length() - 2);
 		if (hintForOptions) {
-			LOGGER.warning(hintForOption + ") for this command");
+			LOGGER.warn(hintForOption + ") for this command");
 		}
 		else {
-			LOGGER.warning(valueBuilder.toString());
+			LOGGER.warn(valueBuilder.toString());
 		}
 
 	}
@@ -394,8 +394,8 @@ public class SimpleParser implements Parser {
 		return cliOptions;
 	}
 
-	protected void commandNotFound(final Logger logger, final String buffer) {
-		logger.warning("Command '" + buffer + "' not found (for assistance press " + AbstractShell.completionKeys + ")");
+	protected void commandNotFound(final Log logger, final String buffer) {
+		logger.warn("Command '" + buffer + "' not found (for assistance press " + AbstractShell.completionKeys + ")");
 	}
 
 	private Collection<MethodTarget> locateTargets(final String buffer, final boolean strictMatching, final boolean checkAvailabilityIndicators) {
@@ -1211,7 +1211,7 @@ public class SimpleParser implements Parser {
 			}
 
 			LOGGER.info(sb.toString());
-//			LOGGER.warning("** Type 'hint' (without the quotes) and hit ENTER for step-by-step guidance **"
+			//			LOGGER.warn("** Type 'hint' (without the quotes) and hit ENTER for step-by-step guidance **"
 //					+ StringUtils.LINE_SEPARATOR);
 		}
 	}

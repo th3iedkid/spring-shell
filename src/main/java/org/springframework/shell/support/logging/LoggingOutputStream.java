@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import org.apache.commons.logging.Log;
 import org.springframework.shell.support.util.Assert;
 import org.springframework.shell.support.util.IOUtils;
 
@@ -35,7 +36,7 @@ import org.springframework.shell.support.util.IOUtils;
 public class LoggingOutputStream extends OutputStream {
 
 	// Constants
-	protected static final Logger LOGGER = HandlerUtils.getLogger(LoggingOutputStream.class);
+	protected static final Log LOGGER = HandlerUtils.getLogger(LoggingOutputStream.class);
 
 	// Fields
 	private final Level level;
@@ -66,7 +67,7 @@ public class LoggingOutputStream extends OutputStream {
 			LogRecord record = new LogRecord(level, msg);
 			record.setSourceClassName(sourceClassName);
 			try {
-				LOGGER.log(record);
+				LOGGER.info(record);
 			} finally {
 				count = 0;
 				IOUtils.closeQuietly(baos);
