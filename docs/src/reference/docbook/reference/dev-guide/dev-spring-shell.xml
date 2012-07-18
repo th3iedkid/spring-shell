@@ -40,17 +40,29 @@ public class HelloWorldCommands implements CommandMarker {
   <section>
     <title>Logging</title>
 
-    <para>Logging is done using JDK logging. Simply add a LOG declaration as
-    shown below to use a logger.</para>
+    <para>Logging is done using Commons Logging API, backed by Log4J by default (everything through
+    <ulink url="http://www.slf4j.org/">SLF4J</ulink> library).
+    
+    Simply add a LOG declaration as shown below to use a logger.</para>
 
     <programlisting>@Component
 public class HelloWorldCommands implements CommandMarker {
  
-  protected final Logger LOG = Logger.getLogger(getClass().getName());
+  protected final Log LOG = LogFactory.getLog(getClass());
 
   // methods with @Cli annotations go here  
 
 }</programlisting>
+    <section>
+
+    <title>Changing the Logging Library</title>
+    
+    <para>As mentioned above, Spring Shell by default provides logging through Log4J - in fact,
+    the jar also contains a default log4j.properties to minimize the amount of noise. However
+    the configuration, as well as the logging library can easily be changed - simply replace the SLF4J
+    binding with the appropriate implementation. As for the configuration, consult the logging
+    library manual for more information.</para>
+    </section>
   </section>
 
   <section>
