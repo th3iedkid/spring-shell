@@ -5,6 +5,8 @@
 build
 target/
 /log.roo
-
+.idea/
 /bin/
 /*.log
+*.iml
+atlassian-ide-plugin.xml

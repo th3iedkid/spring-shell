@@ -7,8 +7,8 @@ buildscript {
     }
 }
 
-description = 'Spring Shell'
-group = 'org.springframework.shell'
+description = 'Spring Shell with spring-dm extension'
+group = 'org.springframework.shell.dm'
 
 repositories {
   mavenLocal()
@@ -35,20 +35,20 @@ dependencies {
     compile "org.fusesource.jansi:jansi:$jansiVersion"
     compile "cglib:cglib:$cglibVersion"
 
-    
+
     // Testing
     testCompile "junit:junit:$junitVersion"
     testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
 
 sourceCompatibility = 1.5
-targetCompatibility = 1.5 
+targetCompatibility = 1.5
 
 javadoc {
   ext.srcDir = file("${projectDir}/docs/src/api")
   destinationDir = file("${buildDir}/api")
   ext.tmpDir = file("${buildDir}/api-work")
-  
+
   configure(options) {
       stylesheetFile = file("${srcDir}/spring-javadoc.css")
       overview = "${srcDir}/overview.html"
@@ -57,23 +57,26 @@ javadoc {
       breakIterator = true
       showFromProtected()
       groups = [
-        'Spring Shell' : ['org.springframework.shell*'],
+        'Spring Shell with DM extension' : ['org.springframework.shell*'],
       ]
-  
+
      links = [
         "http://static.springframework.org/spring/docs/3.1.x/javadoc-api",
         "http://download.oracle.com/javase/6/docs/api",
      ]
-     
+
      //exclude "org/springframework/data/redis/config/**"
   }
-    
+
   title = "${rootProject.description} ${version} API"
 }
 
 jar {
-    manifest.attributes['Implementation-Title'] = 'spring-shell'
+    manifest.attributes['Implementation-Title'] = 'spring-shell-with-dm'
     manifest.attributes['Implementation-Version'] = project.version
+    manifest.attributes['Bundle-Name'] = 'spring-shell-bundle'
+    manifest.attributes['Bundle-SymbolicName'] = 'spring-shell-bundle'
+    manifest.attributes['Bundle-Version'] = project.version
 
     from("$rootDir/docs/src/info") {
         include "license.txt"
@@ -122,17 +125,17 @@ task schemaZip(type: Zip) {
     description = "Builds -${classifier} archive containing all XSDs for deployment"
 
     def Properties schemas = new Properties();
-    
+
     sourceSets.main.resources.find {
         it.path.endsWith('META-INF' + File.separator + 'spring.schemas')
     }?.withInputStream { schemas.load(it) }
 
     ext.paths = [] as Set
-    
+
     for (def key : schemas.keySet()) {
         def shortName = key.replaceAll(/http.*schema.(.*).spring-.*/, '$1')
         assert shortName != key
-        File xsdFile = sourceSets.main.resources.find {
+        File xsdFile = (File)sourceSets.main.resources.find {
             it.path.replace('\\', '/').endsWith(schemas.get(key))
         }
         assert xsdFile != null
@@ -168,7 +171,7 @@ task distroZip(type: Zip, dependsOn: [jar, docsZip, sourcesJar, javadocJar]) {
             exclude '.gradle/'
             exclude 'build/'
         }
-        
+
         from(zipTree(docsZip.archivePath)) {
             into "docs"
         }
